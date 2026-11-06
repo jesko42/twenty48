@@ -114,3 +114,60 @@ TEST_CASE("R4: spawning on a full board does nothing and does not touch the RNG"
     CHECK(toGrid(game.board()) == Grid{{2, 4}, {4, 2}});
     CHECK(rng.calls() == 0);
 }
+
+TEST_CASE("R11.1: undo restores board and score from before the last move") {
+    ScriptedRng rng({0, 3});
+    Game game(rng, makeBoard({{2, 2, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}), 10);
+    const Board before = game.board();
+    REQUIRE(game.move(Direction::Left));
+    REQUIRE(game.score() == 14);
+    REQUIRE(game.canUndo());
+
+    CHECK(game.undo());
+
+    CHECK(game.board() == before);
+    CHECK(game.score() == 10);
+    CHECK_FALSE(game.canUndo());
+}
+
+TEST_CASE("R11.2: several moves are undone in reverse order down to the start") {
+    ScriptedRng rng({0, 3, 0, 3});
+    Game game(rng, makeBoard({{2, 2, 4, 4}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}));
+    const Board start = game.board();
+    REQUIRE(game.move(Direction::Left));
+    const Board afterFirst = game.board();
+    const int scoreAfterFirst = game.score();
+    REQUIRE(game.move(Direction::Right));
+
+    CHECK(game.undo());
+    CHECK(game.board() == afterFirst);
+    CHECK(game.score() == scoreAfterFirst);
+
+    CHECK(game.undo());
+    CHECK(game.board() == start);
+    CHECK(game.score() == 0);
+
+    CHECK_FALSE(game.undo());
+}
+
+TEST_CASE("R11.3: undo right after the start changes nothing and reports false") {
+    ScriptedRng rng({0, 3, 0, 3});
+    Game game(rng);
+    game.start();
+    const Board board = game.board();
+
+    CHECK_FALSE(game.canUndo());
+    CHECK_FALSE(game.undo());
+    CHECK(game.board() == board);
+    CHECK(game.score() == 0);
+}
+
+TEST_CASE("R11.4: an ineffective move leaves nothing to undo") {
+    ScriptedRng rng({});
+    Game game(rng, makeBoard({{2, 4, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}));
+
+    CHECK_FALSE(game.move(Direction::Left));
+
+    CHECK_FALSE(game.canUndo());
+    CHECK_FALSE(game.undo());
+}
