@@ -5,9 +5,22 @@ gh auth login                       # Browser-Login
 scripts/github-setup.sh <owner>/twenty48        # oder: ... --private
 ```
 
-Das Skript legt das Repo an, pusht alle Branches, setzt den Code Owner, schützt `main`
-(PR-Pflicht, alle fünf CI-Checks erforderlich, kein Force-Push, lineare Historie),
-aktiviert Squash-Merges und löscht gemergte Branches automatisch.
+Das Skript legt das Repo an (oder verwendet es, wenn es schon existiert), pusht alle Branches,
+setzt den Code Owner, schützt `main` (PR-Pflicht, alle fünf CI-Checks erforderlich, kein
+Force-Push, lineare Historie), aktiviert Squash-Merges und löscht gemergte Branches automatisch.
+Es ist beliebig oft wiederholbar.
+
+Remotes: `origin` ist GitHub (SSH), `nas` ist der Spiegel auf dem eigenen Server. Für den Spiegel
+nach dem Vortrag: `git push nas --all`.
+
+Stolpersteine, die schon passiert sind:
+
+- `gh` ohne `workflow`-Scope darf keine Workflow-Dateien über HTTPS pushen. Das Skript nimmt
+  deshalb SSH, wenn ein Schlüssel bei GitHub hinterlegt ist. Sonst: `gh auth refresh -s workflow`.
+- Direkt auf `main` pushen scheitert nach dem Setup an der Branch Protection. Das ist gewollt,
+  auch für Doku-Änderungen: Branch, PR, grüne Checks, Merge.
+- Nach dem ersten Push erscheinen Actions-Läufe mit Verzögerung. `gh pr checks <nr>` zeigt sie
+  zuerst. `gh workflow run ci.yml` startet CI bei Bedarf von Hand.
 
 Danach:
 

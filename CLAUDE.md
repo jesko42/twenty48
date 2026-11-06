@@ -48,6 +48,7 @@ scripts/check.sh                                                          # voll
 - Niemals direkt auf `main`. Für jede Aufgabe ein Branch: `feat/<thema>`, `fix/<thema>`, `docs/<thema>`.
 - Conventional Commits auf Englisch: `feat(game): add undo`, `test(game): cover undo (R11)`, `docs(spec): add R11 undo`.
 - Kleine Commits in der Reihenfolge des Prozesses: `docs(spec)` → `test(...)` → `feat(...)`. Der Git-Log soll den Weg zeigen.
+- Remote `origin` ist GitHub, dorthin wird gepusht und dort laufen die Pull Requests. `nas` ist nur ein Spiegel.
 - Pull Request mit der Vorlage aus `.github/PULL_REQUEST_TEMPLATE.md`, Issue verlinken (`Closes #N`).
 
 ## 5. Architektur
