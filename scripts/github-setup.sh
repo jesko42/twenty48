@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # One-time setup of the GitHub repository: create, push, protect main, enable Actions.
-# Usage: scripts/github-setup.sh <owner>/<repo> [--private]
+# Safe to re-run. Usage: scripts/github-setup.sh <owner>/<repo> [--private]
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -10,16 +10,38 @@ OWNER="${REPO%%/*}"
 
 gh auth status >/dev/null
 
-echo "==> create and push $REPO"
-gh repo create "$REPO" "$VISIBILITY" --source . --remote origin --push \
-    --description "2048 in C++17, spec-driven, with Claude Code"
-git push -u origin --all
+# Remote name: "origin" unless origin already points somewhere else (e.g. a private server),
+# then the GitHub remote is called "github".
+REMOTE="origin"
+if git remote get-url origin >/dev/null 2>&1 && ! git remote get-url origin | grep -q "github.com[:/]$REPO"; then
+    REMOTE="github"
+fi
+
+if gh repo view "$REPO" >/dev/null 2>&1; then
+    echo "==> $REPO already exists on GitHub"
+else
+    echo "==> create $REPO"
+    gh repo create "$REPO" "$VISIBILITY" --description "2048 in C++17, spec-driven, with Claude Code"
+fi
+
+if ! git remote get-url "$REMOTE" >/dev/null 2>&1; then
+    if [ "$(gh config get git_protocol)" = "ssh" ]; then
+        git remote add "$REMOTE" "git@github.com:$REPO.git"
+    else
+        gh auth setup-git >/dev/null
+        git remote add "$REMOTE" "https://github.com/$REPO.git"
+    fi
+fi
+gh repo set-default "$REPO"
+
+echo "==> push all branches to $REMOTE"
+git push -u "$REMOTE" --all
 
 echo "==> replace CODEOWNERS placeholder with @$OWNER"
 sed -i "s/@OWNER/@$OWNER/" .github/CODEOWNERS
 git add .github/CODEOWNERS
 git commit -q -m "chore: set code owner" || true
-git push -q
+git push -q "$REMOTE" main
 
 echo "==> protect main (PR required, all CI checks required, no force push)"
 gh api -X PUT "repos/$REPO/branches/main/protection" \
