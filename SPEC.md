@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Status | gültig |
-| Version | 1.0 |
+| Version | 1.1 |
 | Sprache | Spec und Doku auf Deutsch, Code, Tests und Commits auf Englisch |
 
 Diese Datei ist die **einzige Quelle der Wahrheit** für das Verhalten des Spiels.
@@ -89,11 +89,23 @@ Das Spiel ist beendet, wenn keine Zelle leer ist und kein Paar gleicher Kacheln 
 
 ### R10 Bedienung im Terminal
 
-- R10.1 Tasten: `a` links, `d` rechts, `w` oben, `s` unten, `q` beenden. Jede Eingabe wird mit Enter bestätigt.
+- R10.1 Tasten: `a` links, `d` rechts, `w` oben, `s` unten, `u` rückgängig (R11), `q` beenden. Jede Eingabe wird mit Enter bestätigt.
 - R10.2 `--seed N` macht die Kachelplatzierung reproduzierbar.
 - R10.3 `--moves LRUD...` spielt die angegebenen Züge ohne Interaktion und gibt das Endfeld aus (für Tests und Demos).
 - R10.4 Die Ausgabe zeigt immer den aktuellen Punktestand und das Spielfeld; bei Gewinn und Spielende erscheint ein Hinweis.
 - R10.5 Exit-Code 0 bei normalem Ende, 2 bei ungültigen Argumenten.
+
+### R11 Rückgängig
+
+- R11.1 Nach einem wirksamen Zug kann dieser Zug rückgängig gemacht werden. Spielfeld und Punktestand sind danach exakt wie vor dem Zug. Die nach dem Zug erschienene Kachel (R4) verschwindet wieder.
+- R11.2 Mehrere Züge können nacheinander rückgängig gemacht werden, in umgekehrter Reihenfolge, bis zum Zustand nach dem Spielstart (R5).
+- R11.3 Gibt es nichts rückgängig zu machen, verändert die Aktion nichts und meldet das.
+- R11.4 Unwirksame Züge (R6) erzeugen keinen Rückgängig-Eintrag.
+
+| Ausgangslage (Zeile 0) | Zug | danach | Punkte | Rückgängig | Punkte |
+|---|---|---|---|---|---|
+| `2 2 0 0` | links | `4 2 0 0` (neue Kachel 2) | 4 | `2 2 0 0` | 0 |
+| `2 4 0 0` | links | unwirksam | 0 | nichts zu tun | 0 |
 
 ## Nicht-funktionale Anforderungen
 
@@ -107,3 +119,4 @@ Das Spiel ist beendet, wenn keine Zelle leer ist und kein Paar gleicher Kacheln 
 | Datum | Änderung | Anlass |
 |---|---|---|
 | 2026-11-06 | Version 1.0 | Erstfassung |
+| 2026-11-06 | R11 Rückgängig, R10.1 Taste `u` | Issue #1 |
