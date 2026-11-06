@@ -51,7 +51,7 @@ git push -q "$REMOTE" main
 echo "==> protect main (PR required, all CI checks required, no force push)"
 gh api -X PUT "repos/$REPO/branches/main/protection" \
     -H "Accept: application/vnd.github+json" \
-    --input - <<'JSON'
+    --input - >/dev/null <<'JSON'
 {
   "required_status_checks": {
     "strict": true,
