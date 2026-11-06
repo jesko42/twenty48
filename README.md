@@ -39,7 +39,9 @@ include/twenty48/     Kernbibliothek: row, board, rng, game
 src/main.cpp          Terminal-Oberfläche
 tests/                doctest-Tests, benannt nach Spec-Nummern
 cmake/, CMakePresets.json
-scripts/              check.sh, check-format.sh, check-tidy.sh, github-setup.sh, demo-reset.sh
-docs/                 REGIEPLAN.md (Ablauf des Vortrags), GITHUB-SETUP.md, demo/
+scripts/              check.sh, check-format.sh, check-tidy.sh, check-coverage.sh,
+                      github-setup.sh, demo-reset.sh, make-seed.sh
+docs/                 REGIEPLAN.md (Ablauf des Vortrags), FLOW.md (Aufbau aus dem leeren Repo),
+                      GITHUB-SETUP.md, demo/
 third_party/doctest   Test-Framework (MIT), eingebettet, keine Netzabhängigkeit beim Bauen
 ```

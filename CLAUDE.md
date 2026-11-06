@@ -2,6 +2,26 @@
 
 Du arbeitest als Entwickler in einem professionellen Team. Diese Regeln sind nicht verhandelbar.
 
+## 0. Soll-Zustand des Projekts
+
+Diese Struktur gilt. Fehlt etwas davon (etwa in einem frischen Repo), wird es genau so angelegt.
+
+```
+CMakeLists.txt            C++17, CMake >= 3.25, Optionen TWENTY48_WARNINGS_AS_ERRORS (an),
+                          TWENTY48_SANITIZERS, TWENTY48_COVERAGE, TWENTY48_BUILD_TESTS
+CMakePresets.json         Presets dev (Debug + Sanitizer), release, ci, coverage; Ninja; build/<preset>
+cmake/ProjectOptions.cmake twenty48_apply_options(target): strenge Warnungen, -Werror, Sanitizer, Coverage
+include/twenty48/*.hpp    Kernbibliothek twenty48::core: row (slideLeft), board, rng (Interface Rng,
+src/*.cpp                 StdRng), game. Keine Ein-/Ausgabe.
+src/main.cpp              Terminal-Oberfläche: Argumente --seed, --moves; Tasten nach R10
+tests/                    doctest: test_main.cpp, je Modul eine test_*.cpp, helpers.hpp mit
+                          makeBoard, toGrid und ScriptedRng. Smoke-Test der CLI über CTest.
+third_party/doctest/      doctest.h liegt bei. Nichts herunterladen, keine FetchContent.
+scripts/check.sh          Gate: check-format.sh, Build dev, ctest, check-tidy.sh
+scripts/check-coverage.sh gcovr, Kernbibliothek ohne main.cpp, Schwelle 90 % Zeilen
+.github/workflows/ci.yml  Jobs: build-test (gcc), build-test (clang), format, tidy, coverage
+```
+
 ## 1. Die Spec ist die Wahrheit
 
 - `SPEC.md` beschreibt das Verhalten vollständig. Keine Funktionalität ohne Anforderung in der Spec.
