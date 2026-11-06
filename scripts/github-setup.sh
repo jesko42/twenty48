@@ -24,13 +24,18 @@ else
     gh repo create "$REPO" "$VISIBILITY" --description "2048 in C++17, spec-driven, with Claude Code"
 fi
 
-if ! git remote get-url "$REMOTE" >/dev/null 2>&1; then
-    if [ "$(gh config get git_protocol)" = "ssh" ]; then
-        git remote add "$REMOTE" "git@github.com:$REPO.git"
-    else
-        gh auth setup-git >/dev/null
-        git remote add "$REMOTE" "https://github.com/$REPO.git"
-    fi
+# Prefer SSH: pushing workflow files over HTTPS needs the extra "workflow" token scope.
+SSH_CHECK="$(ssh -o BatchMode=yes -o ConnectTimeout=10 -T git@github.com 2>&1 || true)"
+if grep -q "successfully authenticated" <<<"$SSH_CHECK"; then
+    URL="git@github.com:$REPO.git"
+else
+    gh auth setup-git >/dev/null
+    URL="https://github.com/$REPO.git"
+fi
+if git remote get-url "$REMOTE" >/dev/null 2>&1; then
+    git remote set-url "$REMOTE" "$URL"
+else
+    git remote add "$REMOTE" "$URL"
 fi
 gh repo set-default "$REPO"
 
