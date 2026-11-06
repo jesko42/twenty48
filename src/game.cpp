@@ -19,12 +19,24 @@ void Game::start() {
 }
 
 bool Game::move(Direction dir) {
+    Snapshot before{board_, score_};
     const MoveResult result = board_.move(dir);
     if (!result.changed) {
-        return false;
+        return false;  // board_ is untouched when nothing changed (R6.2)
     }
+    history_.push_back(std::move(before));
     score_ += result.score;
     spawnTile();
+    return true;
+}
+
+bool Game::undo() {
+    if (history_.empty()) {
+        return false;
+    }
+    board_ = std::move(history_.back().board);
+    score_ = history_.back().score;
+    history_.pop_back();
     return true;
 }
 

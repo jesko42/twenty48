@@ -27,7 +27,7 @@ void printUsage(std::ostream& out) {
     out << "Usage: twenty48 [--seed N] [--moves LRUD...]\n"
            "  --seed N      deterministic tile placement\n"
            "  --moves S     play the given moves (l/r/u/d) and exit\n"
-           "Keys: a=left d=right w=up s=down q=quit (confirm each key with Enter)\n";
+           "Keys: a=left d=right w=up s=down u=undo q=quit (confirm each key with Enter)\n";
 }
 
 std::optional<Options> parseArgs(int argc, char** argv) {
@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
         if (game.over()) {
             return 0;
         }
-        std::cout << "\nmove [a/d/w/s, q=quit] > " << std::flush;
+        std::cout << "\nmove [a/d/w/s, u=undo, q=quit] > " << std::flush;
         if (!std::getline(std::cin, line)) {
             return 0;
         }
@@ -151,6 +151,12 @@ int main(int argc, char** argv) {
         }
         if (key == 'q') {
             return 0;
+        }
+        if (key == 'u') {
+            if (!game.undo()) {
+                std::cout << "Nothing to undo.\n";
+            }
+            continue;
         }
         if (const auto dir = toDirection(key)) {
             game.move(*dir);
