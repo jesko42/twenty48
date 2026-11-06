@@ -7,7 +7,7 @@ scripts/github-setup.sh <owner>/twenty48        # oder: ... --private
 
 Das Skript legt das Repo an (oder verwendet es, wenn es schon existiert), pusht alle Branches,
 setzt den Code Owner, schützt `main` (PR-Pflicht, alle fünf CI-Checks erforderlich, kein
-Force-Push, lineare Historie), aktiviert Squash-Merges und löscht gemergte Branches automatisch.
+Force-Push, lineare Historie), erlaubt nur Rebase-Merges (die Commits `docs(spec)` → `test` → `feat` bleiben auf `main` sichtbar, Squash würde sie zu einem Commit zusammenfassen) und löscht gemergte Branches automatisch.
 Es ist beliebig oft wiederholbar.
 
 Remotes: `origin` ist GitHub (SSH), `nas` ist der Spiegel auf dem eigenen Server. Für den Spiegel
