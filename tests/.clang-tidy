@@ -1,0 +1,3 @@
+# Tests inherit the project config; doctest macros inflate cognitive complexity artificially.
+InheritParentConfig: true
+Checks: '-readability-function-cognitive-complexity'

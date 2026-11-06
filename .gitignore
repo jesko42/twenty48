@@ -1,0 +1,10 @@
+build/
+.cache/
+*.gcda
+*.gcno
+coverage*/
+compile_commands.json
+.vscode/
+.idea/
+*.swp
+*~
