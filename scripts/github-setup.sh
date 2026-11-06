@@ -66,9 +66,9 @@ gh api -X PUT "repos/$REPO/branches/main/protection" \
 }
 JSON
 
-echo "==> auto-delete merged branches, squash merges only"
+echo "==> auto-delete merged branches, rebase merges only (keeps the spec -> test -> feat commits)"
 gh api -X PATCH "repos/$REPO" -f delete_branch_on_merge=true -f allow_merge_commit=false \
-    -f allow_rebase_merge=false -f allow_squash_merge=true >/dev/null
+    -f allow_rebase_merge=true -f allow_squash_merge=false >/dev/null
 
 echo "==> trigger CI once so the required checks exist"
 gh workflow run ci.yml --ref main 2>/dev/null || true

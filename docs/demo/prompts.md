@@ -39,7 +39,7 @@ und mit dem Publikum lesen: Die Tests zitieren R11.1 bis R11.4.
 ```
 OK. Implementiere R11 in der Kernbibliothek (Game) und die Taste u in main.cpp.
 Dann scripts/check.sh. Dann drei Commits nach CLAUDE.md: docs(spec), test(game), feat(game).
-Push und PR mit gh pr create, Vorlage ausfüllen, Closes #1.
+Push nach origin (GitHub) und PR mit gh pr create, Vorlage ausfüllen, Closes #1.
 ```
 
 Erwartung: grüne Tests, `All checks passed.`, PR-Link.
